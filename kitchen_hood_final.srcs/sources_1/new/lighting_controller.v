@@ -7,13 +7,15 @@ module lighting_controller (
     input wire lighting_switch,    // Switch input instead of button
     output reg lighting_state
 );
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n || !power_state) begin
-            lighting_state <= 0;
-        end
-        else begin
-            // Simply follow the switch state when powered on
-            lighting_state <= lighting_switch;
-        end
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        lighting_state <= 0;
     end
+    else if (!power_state) begin
+        lighting_state <= 0;
+    end
+    else begin
+        lighting_state <= lighting_switch;
+    end
+end
 endmodule

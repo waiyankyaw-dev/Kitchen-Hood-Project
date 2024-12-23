@@ -24,7 +24,7 @@ module time_controller (
 
     // Hour debouncing
     always @(posedge clk) begin
-        if (!rst_n || !power_state) begin
+        if (!rst_n || !power_state) begin  // Reset or power off
             hour_debounce_counter <= 0;
             hour_stable <= 0;
         end
@@ -46,7 +46,7 @@ module time_controller (
 
     // Minute debouncing
     always @(posedge clk) begin
-        if (!rst_n || !power_state) begin
+        if (!rst_n || !power_state) begin  // Reset or power off
             minute_debounce_counter <= 0;
             minute_stable <= 0;
         end
@@ -68,7 +68,7 @@ module time_controller (
 
     // Main time counting and adjustment logic
     always @(posedge clk) begin
-        if (!rst_n || !power_state) begin
+        if (!rst_n) begin  // System reset
             hours <= 6'd0;
             minutes <= 6'd0;
             seconds <= 6'd0;
@@ -76,7 +76,15 @@ module time_controller (
             prev_hour_stable <= 0;
             prev_minute_stable <= 0;
         end
-        else begin
+        else if (!power_state) begin  // Power off state
+            hours <= 6'd0;
+            minutes <= 6'd0;
+            seconds <= 6'd0;
+            clk_counter <= 27'd0;
+            prev_hour_stable <= 0;
+            prev_minute_stable <= 0;
+        end
+        else begin  // Normal operation when powered on
             prev_hour_stable <= hour_stable;
             prev_minute_stable <= minute_stable;
 
@@ -90,32 +98,30 @@ module time_controller (
                 minutes <= (minutes == 59) ? 0 : minutes + 1;
             end
 
-            // Normal time counting (always running when powered)
-            if (power_state) begin
-                if (clk_counter >= 100000000 - 1) begin 
-                    clk_counter <= 27'd0;
-                    if (seconds >= 59) begin
-                        seconds <= 0;
-                        if (minutes >= 59) begin
-                            minutes <= 0;
-                            if (hours >= 23) begin
-                                hours <= 0;
-                            end
-                            else begin
-                                hours <= hours + 1;
-                            end
+            // Normal time counting
+            if (clk_counter >= 100000000 - 1) begin 
+                clk_counter <= 27'd0;
+                if (seconds >= 59) begin
+                    seconds <= 0;
+                    if (minutes >= 59) begin
+                        minutes <= 0;
+                        if (hours >= 23) begin
+                            hours <= 0;
                         end
                         else begin
-                            minutes <= minutes + 1;
+                            hours <= hours + 1;
                         end
                     end
                     else begin
-                        seconds <= seconds + 1;
+                        minutes <= minutes + 1;
                     end
                 end
                 else begin
-                    clk_counter <= clk_counter + 1;
+                    seconds <= seconds + 1;
                 end
+            end
+            else begin
+                clk_counter <= clk_counter + 1;
             end
         end
     end

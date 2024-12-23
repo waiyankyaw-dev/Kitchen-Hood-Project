@@ -101,7 +101,8 @@ module top_kitchen_hood_controller (
         .countdown_seconds(countdown_seconds),
         .display_countdown(display_countdown),
         .accumulated_seconds(accumulated_seconds),     // New connection
-        .display_accumulated_time(display_accumulated_time)  // New connection
+        .display_accumulated_time(display_accumulated_time),  // New connection
+        .power_state(power_state)
     );
 
 

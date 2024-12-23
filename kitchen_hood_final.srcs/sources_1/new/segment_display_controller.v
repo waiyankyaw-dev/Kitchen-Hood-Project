@@ -12,6 +12,7 @@ module segment_display_controller (
    input wire display_gesture_countdown,
    input wire [31:0] accumulated_seconds,     // New input
    input wire display_accumulated_time,       // New input
+   input wire power_state, 
    output reg [7:0] seg_en,      
    output reg [7:0] seg_out0,    
    output reg [7:0] seg_out1     
@@ -94,7 +95,13 @@ module segment_display_controller (
    end
 
    always @(*) begin
-    if (display_gesture_countdown) begin
+   if (!power_state) begin
+              // Turn off all segments when power is off
+              seg_out0 = 8'b00000000;
+              seg_out1 = 8'b00000000;
+          end
+          
+    else if (display_gesture_countdown) begin
             case (scan_cnt)
                 3'd0, 3'd1, 3'd2, 3'd3, 3'd4, 3'd5: begin 
                     seg_out0 = 8'b00000000;

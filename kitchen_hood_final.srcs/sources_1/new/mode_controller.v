@@ -278,7 +278,7 @@ module mode_controller (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            current_mode <= POWER_OFF;
+            current_mode <= STANDBY;
             extraction_level <= LEVEL_OFF;
             countdown_seconds <= 0;
             cleaning_active <= 0;
