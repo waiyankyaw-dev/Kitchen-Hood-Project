@@ -2,7 +2,7 @@
 
 # Control Circuit of Kitchen Exhaust Hood
 
-#### CS202: Digital Logic Project
+#### CS207: Digital Logic Project
 
 ![Kitchen Exhaust Hood Image](./images/kitchen-hood.jpg)
 
